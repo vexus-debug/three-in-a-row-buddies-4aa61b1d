@@ -1,9 +1,16 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-const GATEWAY = "https://ai.gateway.lovable.dev/v1";
-const CHAT_MODEL = "openai/gpt-6-astra";
-const IMAGE_MODEL = "openai/gpt-image-2.5-sunburst";
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+// Same free OpenRouter models used by the clinic ai-copilot, tried in order.
+const FREE_MODELS = [
+  "nvidia/nemotron-3.5-super-vl:free",
+  "google/gemma-4-31b-it:free",
+  "nvidia/nemotron-3-super-120b-a12b:free",
+  "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "google/gemma-4-26b-a4b-it:free",
+  "thinkingmachines/inkling:free",
+];
 const BUCKET = "article-covers";
 export const CATEGORIES = ["practice", "marketing", "dental", "eye-care", "laboratory", "technology"] as const;
 
@@ -54,52 +61,50 @@ function gatewayError(status: number, text: string) {
   return new Error(msg || `AI request failed (${status})`);
 }
 
-/** Streams a Responses call and returns the final text. */
-async function respond(body: Record<string, unknown>): Promise<string> {
-  const key = process.env.LOVABLE_API_KEY;
-  if (!key) throw new Error("AI is not configured");
-  const res = await fetch(`${GATEWAY}/responses`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${key}`,
-      "X-Lovable-AIG-SDK": "fetch",
-    },
-    body: JSON.stringify({ model: CHAT_MODEL, stream: true, store: false, ...body }),
-  });
-  if (!res.ok || !res.body) throw gatewayError(res.status, await res.text());
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buf = "";
-  let out = "";
-  let refusal = "";
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buf += decoder.decode(value, { stream: true });
-    let idx;
-    while ((idx = buf.indexOf("\n\n")) !== -1) {
-      const frame = buf.slice(0, idx);
-      buf = buf.slice(idx + 2);
-      for (const line of frame.split("\n")) {
-        if (!line.startsWith("data:")) continue;
-        const data = line.slice(5).trim();
-        if (!data || data === "[DONE]") continue;
-        try {
-          const ev = JSON.parse(data);
-          if (ev.type === "response.output_text.delta") out += ev.delta ?? "";
-          else if (ev.type === "response.refusal.delta") refusal += ev.delta ?? "";
-          else if (ev.type === "error" || ev.type === "response.failed")
-            throw new Error(ev.error?.message || ev.response?.error?.message || "AI request failed");
-        } catch (e) {
-          if (e instanceof SyntaxError) continue;
-          throw e;
-        }
+/** Calls OpenRouter (same provider/key as the clinic ai-copilot) and returns the text. */
+async function respond(body: {
+  instructions: string;
+  input: { role: string; content: string }[];
+  reasoning?: unknown;
+  text?: { format?: { type: string; name: string; strict?: boolean; schema: unknown } };
+}): Promise<string> {
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) throw new Error("OPENROUTER_API_KEY is not configured");
+  const fmt = body.text?.format;
+  const messages = [
+    { role: "system", content: fmt ? `${body.instructions}\nReply ONLY with valid JSON matching the requested schema.` : body.instructions },
+    ...body.input,
+  ];
+  let lastErr: Error = new Error("AI service unavailable");
+  for (const model of FREE_MODELS) {
+    try {
+      const res = await fetch(OPENROUTER_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
+        body: JSON.stringify({
+          model,
+          messages,
+          ...(fmt ? { response_format: { type: "json_schema", json_schema: { name: fmt.name, strict: !!fmt.strict, schema: fmt.schema } } } : {}),
+        }),
+      });
+      if (!res.ok) {
+        lastErr = gatewayError(res.status, await res.text());
+        continue;
       }
+      const j: any = await res.json();
+      let out: string = j?.choices?.[0]?.message?.content ?? "";
+      if (!out) continue;
+      if (fmt) {
+        const m = out.match(/\{[\s\S]*\}/);
+        out = m ? m[0] : out;
+        try { JSON.parse(out); } catch { lastErr = new Error("Invalid JSON from AI"); continue; }
+      }
+      return out;
+    } catch (e) {
+      lastErr = e as Error;
     }
   }
-  if (!out && refusal) throw new Error("The AI declined this request.");
-  return out;
+  throw lastErr;
 }
 
 // ─────────────── Brainstorm chat ───────────────
@@ -214,30 +219,9 @@ function readMinutes(body: any[]) {
   return Math.max(2, Math.round(words / 220));
 }
 
-async function generateCover(prompt: string): Promise<Uint8Array | null> {
-  const key = process.env.LOVABLE_API_KEY;
-  if (!key) return null;
-  const res = await fetch(`${GATEWAY}/images/generations`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}`, "X-Lovable-AIG-SDK": "fetch" },
-    body: JSON.stringify({
-      model: IMAGE_MODEL,
-      prompt: `Editorial blog cover photograph, realistic, natural light, modern African clinic setting where appropriate, no text, no logos, no watermarks. ${prompt}`,
-      size: "1536x1024",
-      n: 1,
-    }),
-  });
-  if (!res.ok) {
-    console.error("cover generation failed", res.status, await res.text());
-    return null;
-  }
-  const j: any = await res.json();
-  const b64 = j?.data?.[0]?.b64_json;
-  if (!b64) return null;
-  const bin = atob(b64);
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return bytes;
+// Cover images are not generated (no image provider configured); articles save without a cover.
+async function generateCover(_prompt: string): Promise<Uint8Array | null> {
+  return null;
 }
 
 async function uploadCover(supabaseAdmin: any, slug: string, bytes: Uint8Array) {
