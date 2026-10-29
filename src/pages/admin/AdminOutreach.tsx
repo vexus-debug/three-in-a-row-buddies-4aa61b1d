@@ -378,7 +378,6 @@ function CampaignStudio({ initial, initialAudience, onClose }: { initial: Partia
         }
         const { count: total } = await db.from("outreach_recipients").select("id", { count: "exact", head: true }).eq("campaign_id", id);
         await db.from("outreach_campaigns").update({ total_recipients: total ?? 0 }).eq("id", id);
-        await db.from("outreach_campaigns").update({ total_recipients: existingCount + rows.length }).eq("id", id);
         setAudienceRaw("");
       }
       return id!;

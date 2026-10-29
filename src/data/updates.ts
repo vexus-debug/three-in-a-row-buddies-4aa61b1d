@@ -13,6 +13,16 @@ export interface UpdateEntry {
 
 export const updates: UpdateEntry[] = [
   {
+    version: "v2.19.3",
+    date: "October 29, 2026",
+    title: "Outreach campaigns send reliably",
+    kind: "fix",
+    items: [
+      { kind: "fix", text: "Launching or resuming a campaign now starts sending emails immediately." },
+      { kind: "fix", text: "Saving a campaign with already-added recipients no longer shows a duplicate error." },
+    ],
+  },
+  {
     version: "v2.19.2",
     date: "October 29, 2026",
     title: "Independent email and blog AI",
