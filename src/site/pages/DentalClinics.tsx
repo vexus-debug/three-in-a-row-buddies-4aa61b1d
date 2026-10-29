@@ -161,7 +161,7 @@ const DentalClinics = () => {
           </div>
         </section>
         <DentalTrust />
-        <div className="mx-auto max-w-6xl px-4 pb-12 pt-16 sm:px-6 sm:pb-16 lg:pb-24">
+        <div className="bg-background"><div className="mx-auto max-w-6xl px-4 pb-4 pt-16 sm:px-6">
 
 
           <section id="features" className="scroll-mt-24">
@@ -194,14 +194,44 @@ const DentalClinics = () => {
             </div>
           </section>
 
-          <DentalSavings />
+        </div></div>
 
-          <section className="mb-16 lg:mb-24">
-            <motion.p initial="hidden" whileInView="show" viewport={viewport} variants={reveal} className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-primary">A patient's visit</motion.p>
-            <motion.h2 initial="hidden" whileInView="show" viewport={viewport} variants={reveal} className="mb-8 text-2xl font-bold text-foreground md:text-3xl">
-              From the front door to the payment, <span className="text-muted-foreground">one record the whole way</span>
+        {/* Photo intermission — fixed backdrop gives depth on desktop, static on touch */}
+        <section aria-label="Impact at a glance" className="relative isolate overflow-hidden bg-foreground">
+          <div className="absolute inset-0 -z-10 bg-cover bg-center opacity-40 md:bg-fixed" style={{ backgroundImage: `url(${heroPhoto})` }} />
+          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-foreground via-foreground/80 to-foreground/40" />
+          <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:py-32">
+            <motion.p initial="hidden" whileInView="show" viewport={viewport} variants={reveal} className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-primary">What changes in your clinic</motion.p>
+            <motion.h2 initial="hidden" whileInView="show" viewport={viewport} variants={reveal} className="mb-12 max-w-2xl text-3xl font-bold leading-tight text-background md:text-5xl">
+              Less paperwork. More time in the chair.
             </motion.h2>
-            <ol className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-5 md:overflow-visible md:px-0">
+            <dl className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+              {[
+                { v: "3–4 hrs", l: "Admin time given back each day" },
+                { v: "40%", l: "Fewer no-shows with automatic reminders" },
+                { v: "1 record", l: "From booking to payment, per patient" },
+              ].map((m) => (
+                <motion.div key={m.l} initial="hidden" whileInView="show" viewport={viewport} variants={reveal} className="border-l-2 border-primary pl-5">
+                  <dt className="text-4xl font-bold tracking-tight text-background md:text-5xl">{m.v}</dt>
+                  <dd className="mt-2 text-sm text-background/70">{m.l}</dd>
+                </motion.div>
+              ))}
+            </dl>
+          </div>
+        </section>
+
+        <div className="bg-muted/40"><div className="mx-auto max-w-6xl px-4 pt-16 sm:px-6 lg:pt-24">
+          <DentalSavings />
+        </div></div>
+
+        <section className="bg-foreground">
+          <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-24">
+            <motion.p initial="hidden" whileInView="show" viewport={viewport} variants={reveal} className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-primary">A patient's visit</motion.p>
+            <motion.h2 initial="hidden" whileInView="show" viewport={viewport} variants={reveal} className="mb-10 text-2xl font-bold text-background md:text-4xl">
+              From the front door to the payment, <span className="text-background/55">one record the whole way</span>
+            </motion.h2>
+            <ol className="relative -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:grid md:grid-cols-5 md:overflow-visible md:px-0">
+              <span aria-hidden className="pointer-events-none absolute left-0 right-0 top-9 hidden h-px bg-gradient-to-r from-primary/0 via-primary/60 to-primary/0 md:block" />
               {[
                 { icon: CalendarClock, t: "Booked", d: "Chair and dentist reserved, reminder sent." },
                 { icon: Users, t: "Checked in", d: "Front desk sees them join the queue." },
@@ -209,18 +239,20 @@ const DentalClinics = () => {
                 { icon: Boxes, t: "Materials used", d: "Stock updates from the treatment itself." },
                 { icon: Wallet, t: "Paid", d: "Invoice or payment plan, on the same file." },
               ].map((s, i) => (
-                <motion.li key={s.t} initial="hidden" whileInView="show" viewport={viewport} variants={reveal} className="eye-panel relative w-[72%] shrink-0 snap-start rounded-2xl p-5 sm:w-[45%] md:w-auto">
+                <motion.li key={s.t} initial="hidden" whileInView="show" viewport={viewport} variants={{ hidden: { opacity: 0, y: 30 }, show: { opacity: 1, y: 0, transition: { duration: 0.6, delay: i * 0.12, ease: EASE } } }} className="relative w-[72%] shrink-0 snap-start rounded-2xl border border-background/10 bg-background/5 p-5 backdrop-blur-sm transition-colors hover:border-primary/50 hover:bg-background/10 sm:w-[45%] md:w-auto">
                   <span className="mb-4 flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{i + 1}</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground ring-4 ring-foreground">{i + 1}</span>
                     <s.icon className="h-4 w-4 text-primary" />
                   </span>
-                  <h3 className="mb-1 text-base font-semibold text-card-foreground">{s.t}</h3>
-                  <p className="text-sm leading-snug text-muted-foreground">{s.d}</p>
+                  <h3 className="mb-1 text-base font-semibold text-background">{s.t}</h3>
+                  <p className="text-sm leading-snug text-background/65">{s.d}</p>
                 </motion.li>
               ))}
             </ol>
-          </section>
+          </div>
+        </section>
 
+        <div className="bg-gradient-to-b from-primary/[0.06] via-background to-background"><div className="mx-auto max-w-6xl px-4 pt-16 sm:px-6 lg:pt-24">
           <section id="ai" className="mb-16 scroll-mt-24 lg:mb-24">
             <motion.p initial="hidden" whileInView="show" viewport={viewport} variants={reveal} className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.25em] text-primary"><Sparkles className="h-4 w-4" /> AI in your clinical workflow</motion.p>
             <motion.h2 initial="hidden" whileInView="show" viewport={viewport} variants={reveal} className="mb-4 text-2xl font-bold text-foreground md:text-3xl">
@@ -243,7 +275,9 @@ const DentalClinics = () => {
               ))}
             </div>
           </section>
+        </div></div>
 
+        <div className="bg-background"><div className="mx-auto max-w-6xl px-4 pt-16 sm:px-6 lg:pt-24">
           <CapabilityMatrix
             kicker="The rest of the clinic"
             title="Already in there,"
@@ -267,6 +301,8 @@ const DentalClinics = () => {
             </motion.section>
           </div>
 
+        </div></div>
+        <div className="border-t border-primary/10 bg-gradient-to-b from-muted/50 to-background"><div className="mx-auto max-w-6xl px-4 pb-12 pt-16 sm:px-6 sm:pb-16 lg:pt-24">
           <PricingEstimator included={included} pricingHref="/industries/dental-clinics/pricing" casesHref="/industries/dental-clinics/how-cases-work" />
 
           <ClosingBanner
@@ -275,7 +311,7 @@ const DentalClinics = () => {
             whatsapp={WHATSAPP}
             trust={["Every feature included", "No monthly subscription", "Role-based access for 9 staff roles", "Audit trail on every change"]}
           />
-        </div>
+        </div></div>
       </div>
       <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:pb-24">
         <LocalSeo specialty="Dental clinics" />
