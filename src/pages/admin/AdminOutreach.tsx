@@ -374,9 +374,10 @@ function CampaignStudio({ initial, initialAudience, onClose }: { initial: Partia
           return { campaign_id: id, contact_id: contactIds.get(e) ?? null, recipient_email: e, recipient_name: name || first_name || null, clinic_name: clinic_name || null, metadata: meta, status: "pending" };
         });
         for (let i = 0; i < rows.length; i += 500) {
-          const { error } = await db.from("outreach_recipients").insert(rows.slice(i, i + 500)); if (error) throw error;
+          const { error } = await db.from("outreach_recipients").upsert(rows.slice(i, i + 500), { onConflict: "campaign_id,recipient_email", ignoreDuplicates: true }); if (error) throw error;
         }
-        await db.from("outreach_campaigns").update({ total_recipients: existingCount + rows.length }).eq("id", id);
+        const { count: total } = await db.from("outreach_recipients").select("id", { count: "exact", head: true }).eq("campaign_id", id);
+        await db.from("outreach_campaigns").update({ total_recipients: total ?? 0 }).eq("id", id);
         setAudienceRaw("");
       }
       return id!;

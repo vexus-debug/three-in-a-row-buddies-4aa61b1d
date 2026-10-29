@@ -12,6 +12,17 @@ async function requireSuperAdmin(token: string) {
 
 const base = z.object({ token: z.string().min(10), campaignId: z.string().uuid() });
 
+type Admin = Awaited<ReturnType<typeof requireSuperAdmin>>;
+
+/** Sends batches directly from the server until done, paused, or the per-call cap is hit. */
+async function runDispatch(db: Admin, campaignId: string) {
+  const { dispatchChunk } = await import("./outreachSender.server");
+  for (let i = 0; i < 40; i++) {
+    const r = await dispatchChunk(db, campaignId);
+    if (r.status !== "sending" || r.remaining <= 0) return r;
+  }
+}
+
 export const sendOutreachTest = createServerFn({ method: "POST" })
   .inputValidator((d) => base.extend({ testEmail: z.string().trim().email().max(255) }).parse(d))
   .handler(async ({ data }) => {
@@ -42,6 +53,7 @@ export const resumeOutreachCampaign = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const db = await requireSuperAdmin(data.token);
     await db.from("outreach_campaigns").update({ status: "sending" }).eq("id", data.campaignId).eq("status", "paused");
+    await runDispatch(db, data.campaignId);
     return { ok: true };
   });
 
@@ -60,5 +72,6 @@ export const launchOutreachCampaign = createServerFn({ method: "POST" })
       status: "sending", total_recipients: count,
       ...(c.status === "draft" ? { started_at: new Date().toISOString() } : {}),
     }).eq("id", data.campaignId);
+    await runDispatch(db, data.campaignId);
     return { ok: true, total: count };
   });
