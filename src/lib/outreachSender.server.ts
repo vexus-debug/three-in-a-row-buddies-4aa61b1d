@@ -15,15 +15,10 @@ interface Recipient {
   clinic_name: string | null; metadata: unknown; unsubscribe_token: string;
 }
 
-// The Resend key is stored only in Supabase Vault (secret name RESEND_API_KEY).
-let cachedKey: string | null = null;
-async function apiKey() {
-  if (cachedKey) return cachedKey;
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin.rpc("get_resend_api_key" as never);
-  const k = (data as unknown as string | null) ?? null;
-  if (error || !k) throw new Error("Resend API key not found in Supabase Vault (name it RESEND_API_KEY)");
-  cachedKey = k;
+// Resend key comes from the server environment (RESEND_API_KEY); calls go directly to api.resend.com.
+function apiKey() {
+  const k = process.env.RESEND_API_KEY;
+  if (!k) throw new Error("RESEND_API_KEY is not set in the server environment");
   return k;
 }
 
