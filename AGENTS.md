@@ -1,20 +1,6 @@
-<!-- LOVABLE:BEGIN -->
-> [!IMPORTANT]
-> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
-> published git history — force pushing, or rebasing/amending/squashing commits
-> that are already pushed — as it rewrites history on Lovable's side and the
-> user will likely lose their project history.
->
-> Commits you push to the connected branch sync back to Lovable and show up in
-> the editor, so keep the branch in a working state.
-<!-- LOVABLE:END -->
+# MANDATORY GATEPASS (READ FIRST, NEVER SKIP): SKILL VERIFICATION BEFORE ACTION
 
-- Branch-assigned non-admin staff automatically enter their sole sub-branch after sign-in, avoiding an unnecessary clinic picker.
-- The installed app's `/sw.js` (scope /app/) never caches pages; it clears legacy caches and handles Web Push (VAPID, sent from a super-admin server function) whose taps open /app/inbox/:id.
-- Dental dashboard data is role-focused: leadership sees clinic financials, dentists see their assigned schedule, and front-desk roles see queue and collections.
-- All frontend images (including dashboard screenshots on marketing pages) must be stored as real image files in the codebase (`src/assets/`, imported directly) — never as `.asset.json` CDN pointers or remote storage URLs. Fresh dashboard screenshots go in `src/assets/dashboard-shots/`. Tutorial image files remain isolated and unchanged. Why: CDN pointers broke (404) when the project moved; in-code images always travel with the repo.
-- Every shipped feature, improvement or bug fix must be logged as a new entry (newest first) in `src/data/updates.ts` (the public /updates page) in the same change — no exceptions.
-- MANDATORY GATEPASS: SKILL VERIFICATION BEFORE ACTION
+  This rule applies to EVERY request, including short, direct, or "just do X" prompts. Skipping it is always a mistake.
 
   STOP. Before drafting a plan, executing a tool, modifying any file, running queries, or generating code, you MUST complete this 3-step Skill Gatepass. Any action taken prior to completing this protocol is considered an invalid hallucination.
 
@@ -38,3 +24,20 @@
      Explicitly list the core constraints, checklists, and patterns required by those skills that will govern the current work.
 
   Only after this declaration may you propose an architecture, write SQL migrations, edit source files, or execute builds.
+
+<!-- LOVABLE:BEGIN -->
+> [!IMPORTANT]
+> This project is connected to [Lovable](https://lovable.dev). Avoid rewriting
+> published git history — force pushing, or rebasing/amending/squashing commits
+> that are already pushed — as it rewrites history on Lovable's side and the
+> user will likely lose their project history.
+>
+> Commits you push to the connected branch sync back to Lovable and show up in
+> the editor, so keep the branch in a working state.
+<!-- LOVABLE:END -->
+
+- Branch-assigned non-admin staff automatically enter their sole sub-branch after sign-in, avoiding an unnecessary clinic picker.
+- The installed app's `/sw.js` (scope /app/) never caches pages; it clears legacy caches and handles Web Push (VAPID, sent from a super-admin server function) whose taps open /app/inbox/:id.
+- Dental dashboard data is role-focused: leadership sees clinic financials, dentists see their assigned schedule, and front-desk roles see queue and collections.
+- All frontend images (including dashboard screenshots on marketing pages) must be stored as real image files in the codebase (`src/assets/`, imported directly) — never as `.asset.json` CDN pointers or remote storage URLs. Fresh dashboard screenshots go in `src/assets/dashboard-shots/`. Tutorial image files remain isolated and unchanged. Why: CDN pointers broke (404) when the project moved; in-code images always travel with the repo.
+- Every shipped feature, improvement or bug fix must be logged as a new entry (newest first) in `src/data/updates.ts` (the public /updates page) in the same change — no exceptions.
