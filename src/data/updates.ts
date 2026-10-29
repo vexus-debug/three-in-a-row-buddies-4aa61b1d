@@ -13,6 +13,16 @@ export interface UpdateEntry {
 
 export const updates: UpdateEntry[] = [
   {
+    version: "v2.19.2",
+    date: "October 29, 2026",
+    title: "Independent email and blog AI",
+    kind: "improvement",
+    items: [
+      { kind: "improvement", text: "Outreach emails now send directly through Resend using the server key." },
+      { kind: "improvement", text: "The blog writer now uses the same AI provider as the clinic copilot." },
+    ],
+  },
+  {
     version: "v2.19.1",
     date: "October 29, 2026",
     title: "Savings breakdown and safe switching on the dental page",
