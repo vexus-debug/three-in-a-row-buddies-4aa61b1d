@@ -81,6 +81,7 @@ export const DENTAL_HUBS: HubDomain[] = [
       { title: "Estimates", path: "estimates" },
       { title: "Payment Plans", path: "payment-plans" },
       { title: "Expenses", path: "expenses" },
+      { title: "My Earnings", path: "my-earnings" },
     ],
   },
   {
