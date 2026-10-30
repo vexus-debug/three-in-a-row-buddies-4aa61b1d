@@ -135,6 +135,69 @@ export type Database = {
           },
         ]
       }
+      associate_contracts: {
+        Row: {
+          commission_rate: number
+          compensation_basis: string
+          created_at: string
+          daily_minimum: number
+          id: string
+          is_active: boolean
+          lab_fee_share: number
+          notes: string | null
+          org_id: string
+          payout_frequency: string
+          staff_id: string
+          start_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          commission_rate?: number
+          compensation_basis?: string
+          created_at?: string
+          daily_minimum?: number
+          id?: string
+          is_active?: boolean
+          lab_fee_share?: number
+          notes?: string | null
+          org_id: string
+          payout_frequency?: string
+          staff_id: string
+          start_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          commission_rate?: number
+          compensation_basis?: string
+          created_at?: string
+          daily_minimum?: number
+          id?: string
+          is_active?: boolean
+          lab_fee_share?: number
+          notes?: string | null
+          org_id?: string
+          payout_frequency?: string
+          staff_id?: string
+          start_date?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "associate_contracts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "associate_contracts_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: true
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       automation_logs: {
         Row: {
           channel: string
@@ -723,6 +786,79 @@ export type Database = {
             columns: ["patient_id"]
             isOneToOne: false
             referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      commission_payout_items: {
+        Row: {
+          commission_rate: number
+          created_at: string
+          deduction_amount: number
+          description: string
+          earned_amount: number
+          gross_amount: number
+          id: string
+          item_date: string | null
+          item_type: string
+          net_amount: number
+          org_id: string
+          patient_id: string | null
+          payout_id: string
+          source_id: string | null
+        }
+        Insert: {
+          commission_rate?: number
+          created_at?: string
+          deduction_amount?: number
+          description: string
+          earned_amount?: number
+          gross_amount?: number
+          id?: string
+          item_date?: string | null
+          item_type?: string
+          net_amount?: number
+          org_id: string
+          patient_id?: string | null
+          payout_id: string
+          source_id?: string | null
+        }
+        Update: {
+          commission_rate?: number
+          created_at?: string
+          deduction_amount?: number
+          description?: string
+          earned_amount?: number
+          gross_amount?: number
+          id?: string
+          item_date?: string | null
+          item_type?: string
+          net_amount?: number
+          org_id?: string
+          patient_id?: string | null
+          payout_id?: string
+          source_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "commission_payout_items_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_payout_items_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "commission_payout_items_payout_id_fkey"
+            columns: ["payout_id"]
+            isOneToOne: false
+            referencedRelation: "commission_payouts"
             referencedColumns: ["id"]
           },
         ]
