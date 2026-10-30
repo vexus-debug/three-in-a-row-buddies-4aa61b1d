@@ -13,6 +13,18 @@ export interface UpdateEntry {
 
 export const updates: UpdateEntry[] = [
   {
+    version: "v2.20.0",
+    date: "October 30, 2026",
+    title: "Associate dentist pay",
+    kind: "feature",
+    items: [
+      { kind: "feature", text: "Set each associate dentist's contract: commission %, paid on production or collections, lab fee share and daily minimum." },
+      { kind: "feature", text: "Commissions calculates pay from work billed under each dentist and creates an itemised payout in one click." },
+      { kind: "feature", text: "Dentists get a My Earnings page with their running estimate and past pay statements." },
+      { kind: "improvement", text: "Only owners, admins and accountants can edit payouts; dentists see only their own." },
+    ],
+  },
+  {
     version: "v2.19.3",
     date: "October 29, 2026",
     title: "Outreach campaigns send reliably",
