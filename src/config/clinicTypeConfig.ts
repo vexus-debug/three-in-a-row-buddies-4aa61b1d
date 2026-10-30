@@ -92,6 +92,7 @@ const dentalNav: NavGroup[] = [
       { title: "Payment Plans", path: "payment-plans", icon: Wallet },
       { title: "Expenses", path: "expenses", icon: Receipt },
       { title: "Commissions", path: "commissions", icon: Calculator },
+      { title: "My Earnings", path: "my-earnings", icon: Wallet },
       { title: "Revenue Allocation", path: "revenue-allocation", icon: DollarSign },
       { title: "Profitability", path: "profitability", icon: TrendingUp },
     ],

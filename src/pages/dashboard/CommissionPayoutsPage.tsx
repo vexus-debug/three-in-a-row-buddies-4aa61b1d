@@ -16,6 +16,7 @@ import { DollarSign, Plus, CheckCircle2, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { useClinicTerms } from "@/hooks/useClinicTerms";
+import { AssociatePayPanel } from "@/components/dashboard/associate/AssociatePayPanel";
 
 const statusStyles: Record<string, string> = {
   pending: "bg-amber-500/10 text-amber-700 dark:text-amber-400",
@@ -131,6 +132,8 @@ export default function CommissionPayoutsPage() {
           </Card>
         </motion.div>
       </motion.div>
+
+      <AssociatePayPanel />
 
       <Card className="glass-card overflow-hidden">
         <CardHeader className="pb-3 border-b border-border/30">

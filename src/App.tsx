@@ -61,6 +61,7 @@ import ExpensesPage from "./pages/dashboard/ExpensesPage";
 import PaymentPlansPage from "./pages/dashboard/PaymentPlansPage";
 import EstimatesPage from "./pages/dashboard/EstimatesPage";
 import CommissionPayoutsPage from "./pages/dashboard/CommissionPayoutsPage";
+import MyEarningsPage from "./pages/dashboard/MyEarningsPage";
 import ProfitabilityPage from "./pages/dashboard/ProfitabilityPage";
 import InventoryCostsPage from "./pages/dashboard/InventoryCostsPage";
 import AuditLogPage from "./pages/dashboard/AuditLogPage";
@@ -326,6 +327,7 @@ const App = () => (
               <Route path="payment-plans" element={<PaymentPlansPage />} />
               <Route path="estimates" element={<EstimatesPage />} />
               <Route path="commissions" element={<CommissionPayoutsPage />} />
+              <Route path="my-earnings" element={<MyEarningsPage />} />
               <Route path="profitability" element={<ProfitabilityPage />} />
               <Route path="inventory-costs" element={<InventoryCostsPage />} />
               <Route path="audit-log" element={<AuditLogPage />} />
